@@ -1,6 +1,8 @@
 # Motivation Letter Writer AI
 
-An AI-powered web application that generates professional, personalized motivation letters for job applications using Claude AI.
+An AI-powered application that generates professional, personalized motivation letters for job applications using Claude AI.
+
+Available as both a **standalone web app** and a **WordPress plugin**.
 
 ## Features
 
@@ -27,9 +29,32 @@ An AI-powered web application that generates professional, personalized motivati
 - **pdf-parse-fork** - PDF parsing
 - **mammoth** - Word document parsing
 
+### WordPress Plugin
+- **PHP 7.4+** - Server-side language
+- **WordPress REST API** - API integration
+- **React Widget** - Frontend integration
+- **Railway Backend Proxy** - API gateway
+
+## Deployment Options
+
+### 1. Standalone Web Application
+Full React app with Node.js backend - suitable for hosting on any server.
+
+### 2. WordPress Plugin
+Integrate into existing WordPress sites - uses Railway backend for AI processing.
+
+### 3. Railway Deployment
+One-click deploy to Railway with automatic backend setup.
+
+---
+
 ## Quick Start
 
-### Prerequisites
+Choose your deployment method:
+
+### Option A: Standalone Application
+
+#### Prerequisites
 - Node.js >= 18.0.0
 - npm or yarn
 - Anthropic API key
@@ -84,6 +109,58 @@ npm run dev
 - Backend API: http://localhost:3001
 - Health check: http://localhost:3001/api/health
 
+---
+
+### Option B: WordPress Plugin
+
+#### Prerequisites
+- WordPress 5.8+
+- PHP 7.4+
+- Railway backend deployment (or your own backend URL)
+
+#### Installation
+
+1. **Download the plugin**
+```bash
+# Download motivation-letter-writer.zip from releases
+# Or build from source:
+cd motivation-letter-writer-wp
+zip -r motivation-letter-writer.zip *
+```
+
+2. **Install in WordPress**
+- Go to WordPress Admin → Plugins → Add New → Upload Plugin
+- Choose `motivation-letter-writer.zip`
+- Click "Install Now" and then "Activate"
+
+3. **Configure Backend URL**
+- Go to Settings → Motivation Letter Writer
+- Enter your Railway backend URL (default: `https://motivation-letter-writer-production.up.railway.app`)
+- Click "Save Settings"
+
+4. **Add to Pages**
+Add this shortcode to any page or post:
+```
+[motivation_letter_writer]
+```
+
+Optional parameters:
+```
+[motivation_letter_writer max_width="1200px" width="100%"]
+```
+
+---
+
+### Option C: Railway Deployment
+
+[![Deploy on Railway](https://railway.app/button.svg)](https://railway.app/template)
+
+1. Click the deploy button
+2. Add your `ANTHROPIC_API_KEY`
+3. Deploy automatically
+4. Get your backend URL
+5. Use with WordPress plugin or standalone frontend
+
 ## Usage
 
 1. **Upload Resume** (Optional)
@@ -113,10 +190,10 @@ npm run dev
 
 ```
 motivation-letter-writer/
-├── backend/
+├── backend/                        # Node.js Backend
 │   ├── src/
 │   │   ├── routes/
-│   │   │   └── letter.js         # API routes
+│   │   │   └── letter.js          # API routes
 │   │   ├── services/
 │   │   │   ├── ai.js              # Claude AI integration
 │   │   │   └── parser.js          # File parsing
@@ -124,18 +201,25 @@ motivation-letter-writer/
 │   │   │   └── validator.js       # Input validation
 │   │   └── server.js              # Express server
 │   ├── uploads/                   # Temporary file storage
-│   ├── .env                       # Environment variables
 │   └── package.json
-├── frontend/
+│
+├── frontend/                       # React Frontend
 │   ├── src/
 │   │   ├── components/
 │   │   │   ├── LetterForm.jsx     # Multi-step form
 │   │   │   └── LetterResult.jsx   # Results display
 │   │   ├── App.jsx                # Main app component
 │   │   └── main.jsx               # Entry point
-│   ├── index.html
 │   └── package.json
-└── README.md
+│
+├── motivation-letter-writer-wp/   # WordPress Plugin
+│   ├── assets/
+│   │   ├── widget.css             # Compiled Tailwind CSS
+│   │   └── widget.js              # Compiled React app
+│   └── motivation-letter-writer.php  # Main plugin file
+│
+├── LICENSE                        # MIT License
+└── README.md                      # This file
 ```
 
 ## API Endpoints
