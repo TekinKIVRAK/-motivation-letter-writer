@@ -99,33 +99,38 @@ function LetterForm({ onGenerationComplete, onGenerationStart, onError, loading 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Validate final step
-    if (!formData.personalNotes.trim()) {
-      onError('Please add your personal notes to help us create a customized letter.');
-      return;
-    }
-
-    if (formData.personalNotes.trim().length < 30) {
-      onError('Please provide more details in your personal notes for a better motivation letter.');
-      return;
-    }
-
+    // Personal notes are now optional
     onGenerationStart();
 
     try {
       const data = new FormData();
+      // Add file if uploaded
       if (formData.resume) {
         data.append('resume', formData.resume);
       }
       data.append('company', formData.company);
       data.append('position', formData.position);
       data.append('jobPosting', formData.jobPosting);
+      data.append('resumeText', ''); // Will be populated from file if uploaded
       data.append('personalNotes', formData.personalNotes);
-      data.append('tone', 'professional'); // Default tone, backend generates all 3 anyway
 
-      const response = await axios.post('/api/letter/generate', data, {
+      // Use WordPress REST API endpoint
+      console.log('Window mlwConfig:', window.mlwConfig);
+
+      if (!window.mlwConfig) {
+        throw new Error('WordPress configuration not loaded. Please refresh the page.');
+      }
+
+      const apiUrl = window.mlwConfig.apiUrl;
+      const nonce = window.mlwConfig.nonce;
+
+      console.log('Using API URL:', apiUrl);
+      console.log('Using nonce:', nonce ? 'present' : 'missing');
+
+      const response = await axios.post(`${apiUrl}/generate`, data, {
         headers: {
           'Content-Type': 'multipart/form-data',
+          'X-WP-Nonce': nonce
         },
       });
 
@@ -140,13 +145,21 @@ function LetterForm({ onGenerationComplete, onGenerationStart, onError, loading 
       }
     } catch (error) {
       console.error('Generation error:', error);
+      console.error('Error response:', error.response);
+      console.error('Error request:', error.request);
 
       // Provide user-friendly error messages
       let errorMessage = 'Something went wrong. Please try again.';
 
       if (error.response) {
         // Server responded with error
-        errorMessage = error.response.data?.message || errorMessage;
+        console.log('Server error data:', error.response.data);
+        errorMessage = error.response.data?.message || error.response.data?.error || errorMessage;
+
+        // Show full error in console for debugging
+        if (error.response.data) {
+          console.error('Full error details:', JSON.stringify(error.response.data, null, 2));
+        }
       } else if (error.request) {
         // Request made but no response
         errorMessage = 'Unable to connect to the server. Please check your internet connection.';

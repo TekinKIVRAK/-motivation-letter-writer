@@ -8,7 +8,10 @@
       "Bash(copy:*)",
       "Bash(git init:*)",
       "Bash(git config:*)",
-      "Bash(git add:*)"
+      "Bash(git add:*)",
+      "Bash(zip:*)",
+      "Bash(unzip:*)",
+      "Bash(npm install)"
     ],
     "deny": [],
     "ask": []
